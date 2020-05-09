@@ -23,8 +23,6 @@ from deepobs.pytorch.testproblems import fmnist_dcgan
 from deepobs.pytorch.testproblems import testproblem, testproblems_utils, testproblems_modules
 from deepobs.pytorch.datasets import dataset, datasets_utils
 
-# Size of z latent vector (i.e. size of generator input)
-nz = 100
 # Learning rate for optimizers
 lr = 0.0002
 # Beta1 hyperparam for Adam optimizers
@@ -36,11 +34,6 @@ DATA_DIR = "../data_deepobs"
 
 data = fmnist(batch_size=128)
 # Create an instance of the FMNIST Data class (which is a subclass of the Data Set class of DeepOBS), using for example 64 as the batch size.
-
-
-
-
-
 
 next_batch = next(iter(data._train_dataloader))  # get the next batch of the training data set. If you replace '_train_dataloader', with '_test_dataloader' you would get a batch of the test data set and so on.
 
@@ -60,7 +53,6 @@ plt.show()
 
 # Variables needed for training
 device = testproblem.config.get_default_device()
-fixed_noise = torch.randn(64, nz, 1, 1, device=device)
 
 
 # Set up test problem
@@ -69,7 +61,9 @@ testproblem.set_up()
 
 testproblem.train_init_op() # use training data set
 
+images, labels = testproblem._get_next_batch()
 
+fixed_noise = torch.randn(64, testproblem.generator.nz, 1, 1, device=device)
 
 # Establish convention for real and fake labels during training
 real_label = 1
@@ -111,7 +105,7 @@ for epoch in range(num_epochs):
 
         ## Train with all-fake batch
         # Generate batch of latent vectors
-        noise = torch.randn(b_size, nz, 1, 1, device=device)
+        noise = torch.randn(b_size, testproblem.generator.nz, 1, 1, device=device)
         # Generate fake image batch with G
         fake = testproblem.generator(noise)
         label.fill_(fake_label)
@@ -145,7 +139,7 @@ for epoch in range(num_epochs):
         # Output training stats
 
         if i % 50 == 0:
-            print('[%d/%d][%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f\tD(x): %.4f\tD(G(z)): %.4f / %.4f'
+            print('Evaluating after %d of %d epochs and %d of %d iterations...\tLoss_D: %.4f\tLoss_G: %.4f\tD(x): %.4f\tD(G(z)): %.4f / %.4f'
                   % (epoch, num_epochs, i, len(testproblem.data._train_dataloader), errD.item(), errG.item(), D_x, D_G_z1, D_G_z2))
 
         # Save Losses for plotting later

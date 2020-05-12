@@ -63,6 +63,7 @@ testproblem.train_init_op() # use training data set
 
 images, labels = testproblem._get_next_batch()
 
+# Input vector for G: Needed for training. Can be implemented in testproblem/fmnist_dcgan: set_up ?
 fixed_noise = torch.randn(64, testproblem.generator.nz, 1, 1, device=device)
 
 # Establish convention for real and fake labels during training
@@ -73,7 +74,39 @@ fake_label = 0
 optimizerD = optim.Adam(testproblem.net.parameters(), lr=lr, betas=(beta1, 0.999))
 optimizerG = optim.Adam(testproblem.generator.parameters(), lr=lr, betas=(beta1, 0.999))
 
-# Training Loop
+"""
+Training Loop
+
+ Split up into two parts:
+    1. Update D 
+    2. Update G
+
+ 1. Discriminator
+ Maximize log(D(x))+log(1-D(G(z)))
+ Using seperate mini-batches for real and fake samples
+     1. real sample batch with forward pass through D
+       calculate loss (log(D(x)), calculate gradients with  backward pass
+     2. Same for fake batch sample, with loss (log(1-D(G(z))))
+     3. Accumulate gradients with backward pass
+     4. Update D's parameters with an optimizer step
+
+
+ 2. Generator
+ Modified function for G: Maximize (log(D(G(z)))
+     1. Classify G's output from part 1 with D
+     2. Compute G's loss using real labels as GT
+       compute G's gradients with backward pass
+     3. Update G's parameters with an optimizer step
+
+
+ Report training statistics
+ Push fixed_noise batch through G to visually track the progress
+     Loss_D sum of losses for all real and all fake batches
+     Loss_G modified loss function of G
+     D(x) average output of D for the all real batch. Should start close to 1 and in theory converge to 0.5 as G gets better
+     D(G(z)) average of D's output for fake batch. First number represents D before update, second after D's update
+        Should start near 0 then converge to 0.5 as G gets better
+"""
 # Lists to keep track of progress
 img_list = []
 G_losses = []
@@ -84,7 +117,7 @@ print("Starting Training Loop...")
 # For each epoch
 for epoch in range(num_epochs):
     # For each batch in the dataloader
-    for i, data in enumerate(data._train_dataloader, 0):
+    for i, data in enumerate(testproblem.data._train_dataloader, 0):
 
         ############################
         # (1) Update D network: maximize log(D(x)) + log(1 - D(G(z)))
@@ -147,7 +180,7 @@ for epoch in range(num_epochs):
         D_losses.append(errD.item())
 
         # Check how the generator is doing by saving G's output on fixed_noise
-        if (iters % 500 == 0) or ((epoch == num_epochs - 1) and (i == len(data._train_dataloader) - 1)):
+        if (iters % 50 == 0) or ((epoch == num_epochs - 1) and (i == len(testproblem.data._train_dataloader) - 1)):
             with torch.no_grad():
                 fake = testproblem.generator(fixed_noise).detach().cpu()
             img_list.append(vutils.make_grid(fake, padding=2, normalize=True))
@@ -155,7 +188,7 @@ for epoch in range(num_epochs):
             plt.axis("off")
             plt.title("Fake image G(z)")
             plt.imshow(np.transpose(vutils.make_grid(fake, padding=2, normalize=True)))
-            # plt.savefig('results/images/fmnist_dcgan_['+str(epoch)+']['+str(iters)+']')
+            plt.savefig('results/images/fmnist_dcgan_original_['+str(epoch)+']['+str(iters)+']')
 
         iters += 1
 

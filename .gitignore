@@ -1,3 +1,5 @@
 venv/**/**
 data_deepobs/**
+results/**
 .idea/**
+paper/**

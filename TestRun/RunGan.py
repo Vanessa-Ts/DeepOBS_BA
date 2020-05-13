@@ -58,10 +58,8 @@ device = testproblem.config.get_default_device()
 # Set up test problem
 testproblem = fmnist_dcgan(batch_size=128)
 testproblem.set_up()
-
-testproblem.train_init_op() # use training data set
-
-images, labels = testproblem._get_next_batch()
+# Use training data set
+testproblem.train_init_op()
 
 # Input vector for G: Needed for training. Can be implemented in testproblem/fmnist_dcgan: set_up ?
 fixed_noise = torch.randn(64, testproblem.generator.nz, 1, 1, device=device)
@@ -188,7 +186,7 @@ for epoch in range(num_epochs):
             plt.axis("off")
             plt.title("Fake image G(z)")
             plt.imshow(np.transpose(vutils.make_grid(fake, padding=2, normalize=True)))
-            plt.savefig('results/images/fmnist_dcgan_original_['+str(epoch)+']['+str(iters)+']')
+            #plt.savefig('results/images/fmnist_dcgan_images_['+str(epoch)+']['+str(iters)+']')
 
         iters += 1
 

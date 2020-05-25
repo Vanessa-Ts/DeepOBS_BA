@@ -1,5 +1,5 @@
-# DCGAN imports
 from __future__ import print_function
+#%matplotlib inline
 import argparse
 import os
 import random
@@ -9,34 +9,36 @@ import torch.nn.parallel
 import torch.backends.cudnn as cudnn
 import torch.optim as optim
 import torch.utils.data
-from torchvision import datasets, transforms
+import torchvision.datasets as dset
+import torchvision.transforms as transforms
 import torchvision.utils as vutils
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 
-# DeepOBS imports
-from deepobs.pytorch.datasets.fmnist import fmnist  # Import the data loading module of DeepOBS
+#DeepOBS imports
+from deepobs.pytorch.datasets.afhq import afhq  # Import the data loading module of DeepOBS
 from deepobs import pytorch as pt
 from deepobs import config
-from deepobs.pytorch.testproblems import fmnist_dcgan
+from deepobs.pytorch.testproblems import afhq_dcgan
 from deepobs.pytorch.testproblems import testproblem, testproblems_utils, testproblems_modules
+
+DATA_DIR = "../data_deepobs"
 
 # Learning rate for optimizers
 lr = 0.0002
 # Beta1 hyperparam for Adam optimizers
 beta1 = 0.5
 # Number of training epochs
-num_epochs = 0
+num_epochs = 10
 
-DATA_DIR = "../data_deepobs"
 
-data = fmnist(batch_size=128, resize_images=True)
-# Create an instance of the FMNIST Data class
-# (which is a subclass of the Data Set class of DeepOBS)
 
-next_batch = next(iter(data._train_dataloader))
-# get the next batch of the training data set.
+
+data = afhq(batch_size=128)
+# Create an instance of the FMNIST Data class (which is a subclass of the Data Set class of DeepOBS), using for example 64 as the batch size.
+
+next_batch = next(iter(data._train_dataloader))  # get the next batch of the training data set. If you replace '_train_dataloader', with '_test_dataloader' you would get a batch of the test data set and so on.
 
 print(len(next_batch))
 print(len(next_batch[0]))
@@ -48,59 +50,57 @@ print(len(next_batch[0]))
 plt.figure(figsize=(8, 8))
 plt.axis("off")
 plt.title("Training Images")
-plt.imshow(np.transpose(vutils.make_grid(next_batch[0].to(testproblem.config.get_default_device())[:64],
-                                         padding=2, normalize=True).cpu(), (1, 2, 0)))
-# plt.show()
-
+plt.imshow(np.transpose(vutils.make_grid(next_batch[0].to(testproblem.config.get_default_device())[:64], padding=2, normalize=True).cpu(), (1, 2, 0)))
+#plt.show()
 
 # Variables needed for training
 device = testproblem.config.get_default_device()
 
 
 # Set up test problem
-testproblem = fmnist_dcgan(batch_size=128)
+testproblem = afhq_dcgan(batch_size=128)
 testproblem.set_up()
 # Use training data set
 testproblem.train_init_op()
 
 """
-    Training Loop
-    
-     Split up into two parts:
-        1. Update D 
-        2. Update G
-    
-     1. Discriminator
-     Maximize log(D(x))+log(1-D(G(z)))
-     Using seperate mini-batches for real and fake samples
-         1. real sample batch with forward pass through D
-           calculate loss (log(D(x)), calculate gradients with  backward pass
-         2. Same for fake batch sample, with loss (log(1-D(G(z))))
-         3. Accumulate gradients with backward pass
-         4. Update D's parameters with an optimizer step
-    
-    
-     2. Generator
-     Modified function for G: Maximize (log(D(G(z)))
-         1. Classify G's output from part 1 with D
-         2. Compute G's loss using real labels as GT
-           compute G's gradients with backward pass
-         3. Update G's parameters with an optimizer step
-    
-    
-     Report training statistics
-     Push fixed_noise batch through G to visually track the progress
-         Loss_D sum of losses for all real and all fake batches
-         Loss_G modified loss function of G
-         D(x) average output of D for the all real batch. Should start close to 1 and 
-            in theory converge to 0.5 as G gets better
-         D(G(z)) average of D's output for fake batch. First number represents D before update, second after D's update
-            Should start near 0 then converge to 0.5 as G gets better
+Training Loop
+
+ Split up into two parts:
+    1. Update D 
+    2. Update G
+
+ 1. Discriminator
+ Maximize log(D(x))+log(1-D(G(z)))
+ Using seperate mini-batches for real and fake samples
+     1. real sample batch with forward pass through D
+       calculate loss (log(D(x)), calculate gradients with  backward pass
+     2. Same for fake batch sample, with loss (log(1-D(G(z))))
+     3. Accumulate gradients with backward pass
+     4. Update D's parameters with an optimizer step
+
+
+ 2. Generator
+ Modified function for G: Maximize (log(D(G(z)))
+     1. Classify G's output from part 1 with D
+     2. Compute G's loss using real labels as GT
+       compute G's gradients with backward pass
+     3. Update G's parameters with an optimizer step
+
+
+ Report training statistics
+ Push fixed_noise batch through G to visually track the progress
+     Loss_D sum of losses for all real and all fake batches
+     Loss_G modified loss function of G
+     D(x) average output of D for the all real batch. Should start close to 1 and 
+        in theory converge to 0.5 as G gets better
+     D(G(z)) average of D's output for fake batch. First number represents D before update, second after D's update
+        Should start near 0 then converge to 0.5 as G gets better
 """
 # Input vector for G
 fixed_noise = torch.randn(64, testproblem.generator.nz, 1, 1, device=device)
 # Print random vector
-# print(fixed_noise)
+#print(fixed_noise)
 # Establish convention for real and fake labels during training
 real_label = 1
 fake_label = 0
@@ -121,7 +121,7 @@ iters = 0
 
 print("Starting Training Loop...")
 # For each epoch
-for epoch in range(num_epochs + 1):
+for epoch in range(num_epochs+1):
     # For each batch in the dataloader
     for i, data in enumerate(testproblem.data._train_dataloader, 0):
 
@@ -131,7 +131,7 @@ for epoch in range(num_epochs + 1):
         # Train with all-real batch
         testproblem.net.zero_grad()
         # Format batch
-        real_cpu = next_batch[0].to(device)
+        real_cpu = data[0].to(device)
         b_size = real_cpu.size(0)
         label = torch.full((b_size,), real_label, device=device)
         # Forward pass real batch through D
@@ -196,9 +196,10 @@ for epoch in range(num_epochs + 1):
             plt.axis("off")
             plt.title("Fake image G(z)")
             plt.imshow(np.transpose(vutils.make_grid(fake, padding=2, normalize=True)))
-            # plt.savefig('results/images/fmnist_dcgan_fakes_['+str(epoch)+']['+str(iters)+']')
+            plt.savefig('results/images/afhq_dcgan_fakes_['+str(epoch)+']['+str(iters)+']')
 
         iters += 1
+
 # plot loss
 plt.figure(figsize=(15, 15))
 plt.subplot(1, 2, 1)
@@ -216,4 +217,4 @@ plt.plot(D_acc_fake, label="fake")
 plt.xlabel("iterations")
 plt.ylabel("Accuracy")
 plt.legend()
-plt.savefig('results/plots/fmnist_dcgan[epochs: '+str(num_epochs)+'][batch_size: '+str(len(next_batch[0]))+']')
+plt.savefig('results/plots/afhq_dcgan[epochs: '+str(num_epochs)+'][batch_size: '+str(len(next_batch[0]))+']')

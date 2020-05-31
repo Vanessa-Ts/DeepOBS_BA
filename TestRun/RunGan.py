@@ -9,25 +9,27 @@ import torch.nn.parallel
 import torch.backends.cudnn as cudnn
 import torch.optim as optim
 import torch.utils.data
-from torchvision import datasets, transforms
 import torchvision.utils as vutils
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+from torch.optim import Adam
 
 # DeepOBS imports
+from deepobs.pytorch.datasets.celeba import celeba  # Import the data loading module of DeepOBS
+from deepobs.pytorch.datasets.afhq import afhq  # Import the data loading module of DeepOBS
 from deepobs.pytorch.datasets.fmnist import fmnist  # Import the data loading module of DeepOBS
+
 from deepobs import pytorch as pt
-from deepobs import config
-from deepobs.pytorch.testproblems import fmnist_dcgan
+from deepobs.pytorch import config
+from deepobs.pytorch.runners import runner
+from deepobs.pytorch.testproblems import fmnist_dcgan, afhq_dcgan
 from deepobs.pytorch.testproblems import testproblem, testproblems_utils, testproblems_modules
 
 # Learning rate for optimizers
 lr = 0.0002
-# Beta1 hyperparam for Adam optimizers
-beta1 = 0.5
 # Number of training epochs
-num_epochs = 0
+num_epochs = 1
 
 DATA_DIR = "../data_deepobs"
 
@@ -38,13 +40,7 @@ data = fmnist(batch_size=128, resize_images=True)
 next_batch = next(iter(data._train_dataloader))
 # get the next batch of the training data set.
 
-print(len(next_batch))
-print(len(next_batch[0]))
-
-
 # Plot some trainig images from the next_batch
-# To check wether default device can be used
-# Will be deleted later
 plt.figure(figsize=(8, 8))
 plt.axis("off")
 plt.title("Training Images")
@@ -62,7 +58,6 @@ testproblem = fmnist_dcgan(batch_size=128)
 testproblem.set_up()
 # Use training data set
 testproblem.train_init_op()
-
 """
     Training Loop
     
@@ -98,16 +93,14 @@ testproblem.train_init_op()
             Should start near 0 then converge to 0.5 as G gets better
 """
 # Input vector for G
-fixed_noise = torch.randn(64, testproblem.generator.nz, 1, 1, device=device)
-# Print random vector
-# print(fixed_noise)
+fixed_noise = torch.randn(64, testproblem.generator.noise_size, 1, 1, device=config.DEFAULT_DEVICE)
 # Establish convention for real and fake labels during training
 real_label = 1
 fake_label = 0
 
 # Setup Adam optimizers for both G and D
-optimizerD = optim.Adam(testproblem.net.parameters(), lr=lr, betas=(beta1, 0.999))
-optimizerG = optim.Adam(testproblem.generator.parameters(), lr=lr, betas=(beta1, 0.999))
+optimizerD = optim.Adam(testproblem.net.parameters(), lr=lr, betas=(0.5, 0.999))
+optimizerG = optim.Adam(testproblem.generator.parameters(), lr=lr, betas=(0.5, 0.999))
 
 
 # Lists to keep track of progress
@@ -118,6 +111,7 @@ D_acc_real = []
 D_acc_fake = []
 
 iters = 0
+
 
 print("Starting Training Loop...")
 # For each epoch
@@ -131,7 +125,7 @@ for epoch in range(num_epochs + 1):
         # Train with all-real batch
         testproblem.net.zero_grad()
         # Format batch
-        real_cpu = next_batch[0].to(device)
+        real_cpu = next_batch[0].to(config.DEFAULT_DEVICE)
         b_size = real_cpu.size(0)
         label = torch.full((b_size,), real_label, device=device)
         # Forward pass real batch through D
@@ -144,7 +138,7 @@ for epoch in range(num_epochs + 1):
 
         # Train with all-fake batch
         # Generate batch of latent vectors
-        noise = torch.randn(b_size, testproblem.generator.nz, 1, 1, device=device)
+        noise = torch.randn(b_size, testproblem.generator.noise_size, 1, 1, device=device)
         # Generate fake image batch with G
         fake = testproblem.generator(noise)
         label.fill_(fake_label)
@@ -195,8 +189,8 @@ for epoch in range(num_epochs + 1):
             plt.figure(figsize=(15, 15))
             plt.axis("off")
             plt.title("Fake image G(z)")
-            plt.imshow(np.transpose(vutils.make_grid(fake, padding=2, normalize=True)))
-            # plt.savefig('results/images/fmnist_dcgan_fakes_['+str(epoch)+']['+str(iters)+']')
+            plt.imshow(np.transpose(img_list[-1],(1,2,0)))
+            plt.savefig('results/images/fmnist_dcgan_evalG_['+str(epoch)+']['+str(iters)+']')
 
         iters += 1
 # plot loss
@@ -210,7 +204,7 @@ plt.ylabel("Loss")
 plt.legend()
 # plot accuracy
 plt.subplot(1, 2, 2)
-plt.suptitle("Discriminator Accuracy for Real and Fake Images")
+plt.suptitle("D Accuracy for Real and Fake Img")
 plt.plot(D_acc_real, label="real")
 plt.plot(D_acc_fake, label="fake")
 plt.xlabel("iterations")

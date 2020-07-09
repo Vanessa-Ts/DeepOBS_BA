@@ -4,7 +4,7 @@ from torch.optim import Adam, SGD
 from deepobs import pytorch as pt
 from deepobs import config
 
-DATA_DIR = "../data_deepobs"
+DATA_DIR = "../../data_deepobs"
 
 
 def run_testproblem_oneshot(optimizer, hyperparameter, testproblem, defaults):

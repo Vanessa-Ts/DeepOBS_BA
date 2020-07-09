@@ -9,8 +9,8 @@
         The FID is calculated by assuming that X_1 and X_2 are the activations of
         the pool_3 layer of the inception net for generated samples and real world
         samples respectively.
-        See --help to see further details.
-        Code apapted from https://github.com/bioinf-jku/TTUR to use PyTorch instead
+        Code adapted from https://github.com/mseitzer/pytorch-fid to use it for the DeepOBS library.
+        This code was ordiginally apapted from https://github.com/bioinf-jku/TTUR to use PyTorch instead
         of Tensorflow
         Copyright 2018 Institute of Bioinformatics, JKU Linz
         Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,11 +41,13 @@ except ImportError:
 
 from .inception import InceptionV3
 
+
 def imread(filename):
     """
     Loads an image file into a (height, width, 3) uint8 ndarray.
     """
     return np.asarray(Image.open(filename), dtype=np.uint8)[..., :3]
+
 
 def calculate_frechet_distance(mu1, sigma1, mu2, sigma2, eps=1e-6):
     """Numpy implementation of the Frechet Distance.
@@ -101,8 +103,6 @@ def calculate_frechet_distance(mu1, sigma1, mu2, sigma2, eps=1e-6):
             np.trace(sigma2) - 2 * tr_covmean)
 
 
-
-
 def calculate_fid_given_paths(real_path, fake_imgs, batch_size, cuda, dims):
     """Calculates the FID of two paths"""
     if not os.path.exists(real_path):
@@ -114,8 +114,6 @@ def calculate_fid_given_paths(real_path, fake_imgs, batch_size, cuda, dims):
     if cuda:
         model.cuda()
 
-
-
     m1, s1 = _compute_statistics_of_path(real_path, model)
 
     # TODO: Check astype for fake_imgs
@@ -124,7 +122,8 @@ def calculate_fid_given_paths(real_path, fake_imgs, batch_size, cuda, dims):
 
     return fid_value
 
-def _compute_statistics(images, model, batch_size = 50, dims = 2048, cuda=False):
+
+def _compute_statistics(images, model, batch_size=50, dims=2048, cuda=False):
     model.eval()
 
     if batch_size > len(images):
@@ -156,10 +155,10 @@ def _compute_statistics(images, model, batch_size = 50, dims = 2048, cuda=False)
 
         pred_arr[start:end] = pred.cpu().data.numpy().reshape(pred.size(0), -1)
 
-
     mu = np.mean(pred_arr, axis=0)
     sigma = np.cov(pred_arr, rowvar=False)
     return mu, sigma
+
 
 def _compute_statistics_of_path(real_path, model):
     path = pathlib.Path(real_path)

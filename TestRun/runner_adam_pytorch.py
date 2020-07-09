@@ -1,6 +1,6 @@
 import numpy as np
 
-from torch.optim import Adam
+from torch.optim import Adam, rmsprop
 from deepobs import pytorch as pt
 from deepobs import config
 
@@ -12,9 +12,9 @@ def run_testproblem_oneshot(optimizer, hyperparameter, testproblem, defaults):
     batch_size = defaults[testproblem]["batch_size"]
     epochs = defaults[testproblem]["num_epochs"]
     runner.run(testproblem=testproblem, hyperparams={'learning_rate': hyperparameter["lr"]["default"]},
-               batch_size=batch_size, num_epochs=1, random_seed=42, data_dir=DATA_DIR,
-               l2_reg=None, no_logs=None, train_log_interval=None, print_train_iter=True, tb_log=None, tb_log_dir=None,
-               skip_if_exists=False, eval_interval=5)
+               batch_size=batch_size, num_epochs=5, random_seed=42, data_dir=DATA_DIR,
+               l2_reg=None, no_logs=None, train_log_interval=1, print_train_iter=True, tb_log=None, tb_log_dir=None,
+               skip_if_exists=False, eval_interval=1)
 
 
 def init_default_problem_params(testproblem):
@@ -25,10 +25,10 @@ def init_default_problem_params(testproblem):
 
 
 if __name__ == '__main__':
-    testproblem = "mnist_dcgan"
+    testproblem = "afhq_dcgan"
     defaults = init_default_problem_params(testproblem)
-
     optimizer_class = Adam
+
     hyperparams = {
         "lr": {"type": float, "default": 0.0002},
     }

@@ -4,15 +4,14 @@
 
 
 - [Bring the GANs into Action - Extending DeepOBS novel test problems.](#https://github.com/Vanessa-Ts/DeepOBS_BA)
-  - [ Introduction][ # Introduction]
+  - [ Introduction][# Introduction]
   - [📦 Extending Data DeepOBS][ # Extending Data DeepOBS]
   - [📦 Results][ # Results]
   - [📦 Runners][ # Runners]
-  - [📦 Groundwork for the FID calculation][ # GroundworkFID]
+  - [📦 Groundwork for the FID calculation][ # Groundwork for the FID calculation]
 
 ## Introduction
-[ # Introduction]: #Introduction
-In this repository a selection of the implementations and results, obtained during my thesis are provided.
+[# Introduction]: https://github.com/Vanessa-Ts/DeepOBS_BA/blob/master/README.md#IntroductionIn this repository a selection of the implementations and results, obtained during my thesis are provided.
 
 This work is a direct extension of the development branch of **DeepOBS** - A deep learning optimizer benchmark suite.
 Including the additional data sets **Animal Faces HQ** (Adapted from https://github.com/clovaai/stargan-v2) and **CelebA** (source: http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html).
@@ -46,7 +45,7 @@ this folder contains scripts for **SGD**, **MOMENTUM** and **ADAM** respectively
 
 
 ## Groundwork for the FID calculation
-[ # GroundworkFID]: #https://github.com/Vanessa-Ts/DeepOBS_BA/tree/master/TestRun/calculate_FID
+[ # Groundwork for the FID calculation]: #https://github.com/Vanessa-Ts/DeepOBS_BA/tree/master/TestRun/calculate_FID
 Due to the limited time of a bachelors thesis,
 a full implementation of the Fréchet Inception Distance, cannot be provided,
 in the first introduction of **GAN**s in **DeepOBS**.
@@ -54,3 +53,5 @@ However offering a quantitative evaluation method, in the automatized benchmark 
 Therefore several preparations have been done, to smoothen the implementation of such.
 These include, the pre-trained inception-v3 network and the basic calculations needed for the **FID**,
 as well as some adjustments in the training process of the **GAN**s in **DeepOBS**.
+
+

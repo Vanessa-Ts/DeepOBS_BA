@@ -28,7 +28,7 @@ Most of the data sets provided in **DeepOBS**, the images are downloaded and pre
 For the the data sets, that have been newly introduced, there is no reliable source for the automatized procedure, 
 therefore the data sets are offered in folders, that can be directly used with the instances of the test problems.
 
-##Results
+## Results
 [# Results]: #Results
 Within this thesis, various experiments have been done, with the novel test problems, 
 in order to investigate their performance and weaknesses, in the training process, with different optimizers.

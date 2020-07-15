@@ -1,0 +1,31 @@
+{
+    "testproblem": "fmnist_2c2d",
+    "batch_size": 128,
+    "num_epochs": 0,
+    "random_seed": 42,
+    "l2_reg": null,
+    "optimizer_name": "Adam",
+    "optimizer_hyperparams": {
+        "lr": 0.0002
+    },
+    "training_params": {},
+    "train_losses": [
+        2.343802748582302
+    ],
+    "valid_losses": [
+        2.3469197780658035
+    ],
+    "test_losses": [
+        2.3467648915755444
+    ],
+    "minibatch_train_losses": [],
+    "train_accuracies": [
+        0.09575320512820513
+    ],
+    "valid_accuracies": [
+        0.09364983974358974
+    ],
+    "test_accuracies": [
+        0.09805689102564102
+    ]
+}

@@ -10,7 +10,7 @@
         the pool_3 layer of the inception net for generated samples and real world
         samples respectively.
         Code adapted from https://github.com/mseitzer/pytorch-fid to use it for the DeepOBS library.
-        This code was ordiginally apapted from https://github.com/bioinf-jku/TTUR to use PyTorch instead
+        This code was originally adapted from https://github.com/bioinf-jku/TTUR to use PyTorch instead
         of Tensorflow
         Copyright 2018 Institute of Bioinformatics, JKU Linz
         Licensed under the Apache License, Version 2.0 (the "License");

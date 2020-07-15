@@ -12,7 +12,7 @@ def run_testproblem_oneshot(optimizer, hyperparameter, testproblem, defaults):
     batch_size = defaults[testproblem]["batch_size"]
     epochs = defaults[testproblem]["num_epochs"]
     runner.run(testproblem=testproblem, hyperparams={'learning_rate': hyperparameter["lr"]["default"]},
-               batch_size=batch_size, num_epochs=20, random_seed=42, data_dir=DATA_DIR,
+               batch_size=batch_size, num_epochs=40, random_seed=42, data_dir=DATA_DIR,
                l2_reg=None, no_logs=None, train_log_interval=1, print_train_iter=True, tb_log=None, tb_log_dir=None,
                skip_if_exists=False, eval_interval=5)
 
@@ -31,8 +31,9 @@ if __name__ == '__main__':
     optimizer_class = SGD
     hyperparams = {
         "lr": {"type": float, "default": 0.001},
-        "momentum": {"type": float, "default": 0.5},
-        "nesterov": {"type": bool, "default": True},
+        "momentum": {"type": float, "default": 0.9},
+        "nesterov": {"type": bool, "default": False},
     }
+    print(optimizer_class, testproblem, hyperparams)
     run_testproblem_oneshot(optimizer_class, hyperparams, testproblem, defaults)
     print(defaults)

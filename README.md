@@ -5,8 +5,8 @@
 
 - [Bring the GANs into Action - Extending DeepOBS novel test problems.](#https://github.com/Vanessa-Ts/DeepOBS_BA)
   - [ Introduction][# Introduction]
-  - [📦 Extend Data DeepOBS][#Extend]
-  - [📦 Results][ # Results]
+  - [📦 Extend Data DeepOBS][# Extend]
+  - [ Results][# Results]
   - [📦 Runners][ # Runners]
   - [📦 Groundwork for the FID calculation][ # Groundwork ]
 
@@ -23,13 +23,13 @@ For the reproduction of this work, scripts to directly run the optimizers on the
 Lastly, the repository contains the preparations, for a future implementation of the **Fréchet Inception Distance**.
 
 ## Extending Data DeepOBS
-[#Extend]: #Extend
+[# Extend]: #Extend
 Most of the data sets provided in **DeepOBS**, the images are downloaded and preprocessed automatically.
 For the the data sets, that have been newly introduced, there is no reliable source for the automatized procedure, 
 therefore the data sets are offered in folders, that can be directly used with the instances of the test problems.
 
 ##Results
-[ # Results]: #Results
+[# Results]: #Results
 Within this thesis, various experiments have been done, with the novel test problems, 
 in order to investigate their performance and weaknesses, in the training process, with different optimizers.
 The results of each test problem are saved in folders respectively, 
@@ -53,6 +53,8 @@ However offering a quantitative evaluation method, in the automatized benchmark 
 Therefore several preparations have been done, to smoothen the implementation of such.
 These include, the pre-trained inception-v3 network and the basic calculations needed for the **FID**,
 as well as some adjustments in the training process of the **GAN**s in **DeepOBS**.
+
+
 
 
 

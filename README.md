@@ -1,4 +1,4 @@
-# Bring the GANs into action - Extending DeepOBS with novel test problems
+# Bring the GANs into Action - Extending DeepOBS with novel test problems
 
 ## 📇 Table of Contents
 
@@ -22,11 +22,14 @@ For the reproduction of this work, scripts to directly run the optimizers on the
 
 Lastly, the repository contains the preparations, for a future implementation of the **Fréchet Inception Distance**.
 
+-----------------------------------------------------------------------------------------------------------------------
 ## Extending Data DeepOBS
 [# Extend]: #Extend
 Most of the data sets provided in **DeepOBS**, the images are downloaded and preprocessed automatically.
 For the the data sets, that have been newly introduced, there is no reliable source for the automatized procedure, 
 therefore the data sets are offered in folders, that can be directly used with the instances of the test problems.
+
+-----------------------------------------------------------------------------------------------------------------------
 
 ## Results
 [# Results]: #Results
@@ -36,13 +39,16 @@ The results of each test problem are saved in folders respectively,
 that follow the original structure of the **DeepOBS** code.
 
 
+-----------------------------------------------------------------------------------------------------------------------
+
 ## Runners
 [ # Runners]: #Runners
-To run a test problem, several arguments have to be handed over. 
-To simply the execution of the test problems, 
+To simplify the execution of the test problems, 
 this folder contains scripts for **SGD**, **MOMENTUM** and **ADAM** respectively.
+The required arguments can be directly inserted. Additionally, it provides an easy way to switch 
+between manually setting the batch size and epochs for the run or using the default setting.
 
-
+-----------------------------------------------------------------------------------------------------------------------
 
 ## Groundwork for the FID calculation
 [ # Groundwork ]: #Groundwork

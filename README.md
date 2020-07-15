@@ -11,7 +11,8 @@
   - [📦 Groundwork for the FID calculation][ # Groundwork for the FID calculation]
 
 ## Introduction
-[# Introduction]: https://github.com/Vanessa-Ts/DeepOBS_BA/blob/master/README.md#IntroductionIn this repository a selection of the implementations and results, obtained during my thesis are provided.
+[# Introduction]: #https://github.com/Vanessa-Ts/DeepOBS_BA/blob/master/README.md#Introduction
+In this repository a selection of the implementations and results, obtained during my thesis are provided.
 
 This work is a direct extension of the development branch of **DeepOBS** - A deep learning optimizer benchmark suite.
 Including the additional data sets **Animal Faces HQ** (Adapted from https://github.com/clovaai/stargan-v2) and **CelebA** (source: http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html).

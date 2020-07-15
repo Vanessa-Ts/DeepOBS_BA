@@ -5,10 +5,10 @@
 
 - [Bring the GANs into Action - Extending DeepOBS novel test problems.](#https://github.com/Vanessa-Ts/DeepOBS_BA)
   - [ Introduction][# Introduction]
-  - [📦 Extend Data DeepOBS][# Extend]
+  - [ Extend Data DeepOBS][# Extend]
   - [ Results][# Results]
-  - [📦 Runners][ # Runners]
-  - [📦 Groundwork for the FID calculation][ # Groundwork ]
+  - [ Runners][ # Runners]
+  - [ Groundwork for the FID calculation][ # Groundwork ]
 
 ## Introduction
 [# Introduction]: #Introduction
